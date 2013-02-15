@@ -1,0 +1,11 @@
+/<%= has_variable?("dumppath") ? dumppath : '/dumps' %>/<%= title %>.dump {
+        rotate <%= has_variable?("rotate") ? rotate : '7' %>
+        dateext
+        <%= has_variable?("frequency") ? frequency : 'daily' %>
+        nocompress
+        nocopytruncate
+        postrotate
+          HOME=/root svnadmin dump /<%= has_variable?("path") ? path : '/data' %>/<%= title %> > /<%= has_variable?("dumppath") ? dumppath : '/dumps' %>/<%= title %>.dump
+        endscript
+}
+
