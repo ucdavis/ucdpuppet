@@ -1,7 +1,0 @@
-<% 
-# title = "cmderr"
-command = "ldapsearch -LLL -H ldaps://ldap.ucdavis.edu:636 -b ou=IKRB,ou=Accounts,dc=it,dc=ucdavis,dc=edu -D \"uid=lawr,ou=Special Users,dc=it,dc=ucdavis,dc=edu\" -w '",ldap_password,"' \"(uid=",title,")\" uidNumber |grep ^uidNumber| awk \'{print $2}\'" 
-uid = `#{command}` 
-uid.chop!
-uid.sub! /\A0+/, '' -%>
-<%=uid -%>
