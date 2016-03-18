@@ -10,7 +10,7 @@ class ssh {
 			}
 		}
 		default: {
-			notify { "this OS is not supported, to fix go to http://github.com/ucdavis/ucdpuppet and open an issue or a pull request"}
+			notify { "OS ${operatingsystem} is not supported, to fix go to http://github.com/ucdavis/ucdpuppet and open an issue or a pull request"}
    	}
 	}
 }
@@ -25,7 +25,7 @@ class ssh::nopassword inherits ssh {
 		notify => Service[ssh]
 	}
 	default: {
-		notify { "this OS is not supported, to fix go to http://github.com/ucdavis/ucdpuppet and open an issue or a pull request"}
+		notify { "OS ${operatingsystem} is not supported, to fix go to http://github.com/ucdavis/ucdpuppet and open an issue or a pull request"}
 	}
 }
 
