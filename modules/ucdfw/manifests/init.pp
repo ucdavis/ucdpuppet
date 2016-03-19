@@ -1,8 +1,10 @@
-class ucdfw {
+
+class ucdfw
+{
 	package { [ iptables-persistent ]: ensure => latest }
 }
 
-class ucdfw::sshonly inherits ucdfw
+class ucdfw::sshonly
 {
 	stage { 'fw_pre':  before  => Stage['main']; }
 	stage { 'fw_post': require => Stage['main']; }

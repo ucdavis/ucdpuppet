@@ -23,6 +23,11 @@ class ssh::nopassword inherits ssh {
 				changes => [ "set PasswordAuthentication no"],
 				notify => Service[ssh]
 			}
+			augeas { ssh_config:
+				context => "/files/etc/ssh/ssh_config",
+				changes => [ "set Host[.='*']/VerifyHostKeyDNS yes"],
+				notify => Service[ssh]
+			}
 		}
 		default: {
 			notify { "OS ${operatingsystem} is not supported, to fix go to http://github.com/ucdavis/ucdpuppet and open an issue or a pull request": }
