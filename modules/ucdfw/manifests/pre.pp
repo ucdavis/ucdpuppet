@@ -11,7 +11,7 @@ class ucdfw::pre {
 	firewall { '002 accept related established rules':
 		proto   => 'all',
 		state   => ['RELATED', 'ESTABLISHED'],
-    	action  => 'accept',
+		action  => 'accept',
   	}
 	firewall { '100 allow ssh access':
 		dport   => '22',
