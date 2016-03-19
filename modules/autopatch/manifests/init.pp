@@ -5,11 +5,13 @@ class autopatch
 		/^(Debian|Ubuntu)$/: {
 			package { [unattended-upgrades]: ensure => latest }
 			file { "/etc/apt/apt.conf.d/20auto-upgrades":
-	 	   	source => "puppet:///modules/ubuntu/auto-upgrade",
+	 	   	source => "puppet:///modules/autopatch/auto-upgrade",
 			}
+		}
 		default: {
-			notify { "OS ${operatingsystem} is not supported, to fix go to http://github.com/ucdavis/ucdpuppet and open an issue or a pull request"}
-      }
+			notify { "OS ${operatingsystem} is not supported, to fix go to http://github.com/ucdavis/ucdpuppet and open an issue or a pull request": }
+		}
+	}
 }
 
 

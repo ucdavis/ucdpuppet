@@ -10,7 +10,7 @@ class ssh {
 			}
 		}
 		default: {
-			notify { "OS ${operatingsystem} is not supported, to fix go to http://github.com/ucdavis/ucdpuppet and open an issue or a pull request"}
+			notify { "OS ${operatingsystem} is not supported, to fix go to http://github.com/ucdavis/ucdpuppet and open an issue or a pull request": }
    	}
 	}
 }
@@ -19,13 +19,14 @@ class ssh::nopassword inherits ssh {
 	case $operatingsystem {
 		/^(Debian|Ubuntu)$/: {
 			augeas { sshd_config:
-			context => "/files/etc/ssh/sshd_config",
-			changes => [ "set PasswordAuthentication no",
+				context => "/files/etc/ssh/sshd_config",
+				changes => [ "set PasswordAuthentication no"],
+				notify => Service[ssh]
+			}
 		}
-		notify => Service[ssh]
-	}
-	default: {
-		notify { "OS ${operatingsystem} is not supported, to fix go to http://github.com/ucdavis/ucdpuppet and open an issue or a pull request"}
+		default: {
+			notify { "OS ${operatingsystem} is not supported, to fix go to http://github.com/ucdavis/ucdpuppet and open an issue or a pull request": }
+		}
 	}
 }
 
