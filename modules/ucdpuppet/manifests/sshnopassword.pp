@@ -1,5 +1,5 @@
 
-class ssh {
+class ucdpuppet::ssh {
 	case $operatingsystem {
 		/^(Debian|Ubuntu)$/: {
 			package { "openssh-server": ensure => latest}
@@ -15,7 +15,7 @@ class ssh {
 	}
 }
 
-class ssh::nopassword inherits ssh {
+class ucdpuppet::sshnopassword inherits ucdpuppet::ssh {
 	case $operatingsystem {
 		/^(Debian|Ubuntu)$/: {
 			augeas { sshd_config:

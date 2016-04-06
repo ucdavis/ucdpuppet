@@ -1,4 +1,4 @@
-class useucdpuppet
+class ucdpuppet::useucdpuppet
 {
 	augeas { "puppet.conf":
       context => "/files/etc/puppetlabs/puppet/puppet.conf/agent",

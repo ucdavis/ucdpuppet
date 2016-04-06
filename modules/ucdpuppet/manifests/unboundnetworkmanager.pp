@@ -1,4 +1,4 @@
-class unbound {
+class ucdpuppet::unbound {
 	case $operatingsystem {
 		/^(Debian|Ubuntu)$/: { 
 			package { [ unbound ]: ensure => latest }
@@ -10,11 +10,11 @@ class unbound {
 	}
 }
 
-class unbound::networkmanager inherits unbound {
+class ucdpuppet::unboundnetworkmanager inherits ucdpuppet::unbound {
 	case $operatingsystem {
 		/^(Debian|Ubuntu)$/: { 
 			file { "/etc/NetworkManager/NetworkManager.conf":
-				source => "puppet:///modules/unbound/NetworkManager.conf"
+				source => "puppet:///modules/ucdpuppet/NetworkManager.conf"
 			}
 		}
 		default: {

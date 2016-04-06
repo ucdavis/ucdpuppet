@@ -1,4 +1,5 @@
-class ucdfw::pre {
+class ucdpuppet::fw_pre {
+	package { [ iptables-persistent ]: ensure => latest }
 	firewall { '000 accept all icmp':
 		proto   => 'icmp',
 		action  => 'accept',

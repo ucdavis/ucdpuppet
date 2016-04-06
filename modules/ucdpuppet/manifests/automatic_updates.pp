@@ -1,11 +1,11 @@
 
-class autopatch
+class ucdpuppet::automatic_updates
 {
 	case $operatingsystem {
 		/^(Debian|Ubuntu)$/: {
 			package { [unattended-upgrades]: ensure => latest }
 			file { "/etc/apt/apt.conf.d/20auto-upgrades":
-	 	   	source => "puppet:///modules/autopatch/auto-upgrade",
+	 	   	source => "puppet:///modules/ucdpuppet/auto-upgrade",
 			}
 		}
 		default: {
