@@ -1,3 +1,18 @@
+# This module configured NetworkManager to use unbound.  
+#
+# This has several advantages, not limited to:
+# * It's DNSSEC enabled
+# * client no longer depend on the local name server which may be down or slow
+# * It's generally much faster
+# * Unbound is simple, fast, and written from scratch with security in mind
+# * If SSHFP records are signed with DNSSEC ssh will trust them without querying
+#   the user
+# 
+# I believe Apple, Microsoft, and Canonical are moving in this direction 
+# (local validating, recursive, and caching DNS resolver).  Citation needed.
+#
+# recommended for all users
+
 class ucdpuppet::unbound {
 	case $operatingsystem {
 		/^(Debian|Ubuntu)$/: { 

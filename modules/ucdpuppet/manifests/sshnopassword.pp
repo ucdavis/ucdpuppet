@@ -1,3 +1,11 @@
+# This module turns off password authentication for ssh, this prevents
+# brute force attacks from guessing your users passwords.
+#
+# This is recommended for all clients.
+#
+# To use ssh with keys instead of passwords generate a key with ssh-keygen
+# and place the public key in the destinations ~/.ssh/authorized_keys
+#
 
 class ucdpuppet::ssh {
 	case $operatingsystem {

@@ -1,3 +1,12 @@
+# This module enables security upgrades without requiring use input.
+#
+# This is recommended for all clients.  This is not recommended for all
+# servers.
+#
+# The theory is that it's better for a client to be patched/most secure all 
+# the time and occasionally have upgrade problems than to have security probems
+# related to unpatched systems.
+#
 
 class ucdpuppet::automatic_updates
 {

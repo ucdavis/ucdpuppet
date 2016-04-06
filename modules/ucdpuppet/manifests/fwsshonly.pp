@@ -1,6 +1,12 @@
-
-# this module assumes you ran something like:
-# puppet module install puppetlabs-firewall
+# This modules enables a firewall (iptables) to block all incoming connections
+# except ssh.  Only other incoming traffic that is allow is ICMP (for ping
+# and MTU negotiations) and incoming traffic related to outgoing traffic.
+#
+# recommended for all clients that only need ssh incoming.
+#
+# ucdpuppet::sshnopassword is strongly recommended in combination with this 
+# module to prevent brute force attacks against your password
+#
 
 class ucdpuppet::fwsshonly
 {

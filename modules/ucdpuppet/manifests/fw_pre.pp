@@ -1,3 +1,4 @@
+#part of ucdpuppet::fwsshonly
 class ucdpuppet::fw_pre {
 	package { [ iptables-persistent ]: ensure => latest }
 	firewall { '000 accept all icmp':
