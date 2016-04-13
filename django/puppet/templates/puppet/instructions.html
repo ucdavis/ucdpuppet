@@ -1,0 +1,52 @@
+<p>
+    UCD Puppet basic installation instructions for Debian/Ubuntu family boxes
+<pre>
+wget https://apt.puppetlabs.com/puppetlabs-release-pc1-$(lsb_release -sc | sed 's/^\(unstable\|sid\)$/jessie/').deb
+sudo dpkg -i puppetlabs-release-pc1-$(lsb_release -sc | sed 's/^\(unstable\|sid\)$/jessie/').deb
+sudo apt-get update
+sudo apt-get install puppet-agent
+</pre>
+</p>
+
+<p>For RedHat/CentOS/etc newer than version 5:
+<pre>
+sudo rpm -Uvh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-$(lsb_release -sr | awk -F. '{print $1}').noarch.rpm
+sudo yum install puppet-agent
+</pre>
+</p>
+
+<p>For RHEL version 5:
+<pre>
+wget https://yum.puppetlabs.com/puppetlabs-release-pc1-el-$(lsb_release -sr | awk -F. '{print $1}').noarch.rpm
+rpm -Uvh puppetlabs-release-pc1-el-$(lsb_release -sr | awk -F. '{print $1}').noarch.rpm
+yum install puppet-agent
+</pre>
+
+<hr>Now, run the agent:
+<pre>
+{{ puppet_run_command }}
+</pre>
+</p>
+
+<p class="pre"><span class="console">
+root@puppet-test:~# {{ puppet_run_command }} --waitforcert 0</span><span
+        class="console console-green">
+Info: Creating a new SSL key for puppet-test.metro.ucdavis.edu
+Info: Caching certificate for ca
+Info: csr_attributes file loading from /etc/puppetlabs/puppet/csr_attributes.yaml
+Info: Creating a new SSL certificate request for puppet-test.metro.ucdavis.edu
+Info: Certificate Request fingerprint (SHA256): 6E:69:90:1B:38:33:C8:CA:1F:99:3C:81:60:BB:BA:D4:A2:D4:39:94:E5:E8:7C:2C:F0:A5:58:2F:8B:93:E9:81
+Info: Caching certificate for ca</span><span class="console">
+Exiting; no certificate found and waitforcert is disabled
+root@puppet-test:~#
+</span>
+</p>
+
+<p>Pay attention to the output, you will need the FQDN from the line that starts with <tt>Creating
+    a new SSL key for</tt> as well as the certificate fingerprint from the line that starts with <tt>Info: Certificate
+    Request fingerprint (SHA256):</tt>. Plug those values into the form below.</p>
+
+<p>For full instructions see the <a href="https://docs.puppetlabs.com/puppet/latest/reference/install_linux.html">upstream
+    instructions</a>.</p>
+
+<p><b>Note:</b> <tt>lsb_release</tt> is available in the <tt>redhat-lsb-core</tt> package.</p>
