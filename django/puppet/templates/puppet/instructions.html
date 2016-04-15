@@ -24,12 +24,12 @@ yum install puppet-agent
 
 <hr>Now, run the agent:
 <pre>
-{{ puppet_run_command }}
+{{ puppet_run_command_initial }}
 </pre>
 </p>
 
 <p class="pre"><span class="console">
-root@puppet-test:~# {{ puppet_run_command }} --waitforcert 0</span><span
+root@puppet-test:~# {{ puppet_run_command_initial }}</span><span
         class="console console-green">
 Info: Creating a new SSL key for puppet-test.metro.ucdavis.edu
 Info: Caching certificate for ca
@@ -45,6 +45,15 @@ root@puppet-test:~#
 <p>Pay attention to the output, you will need the FQDN from the line that starts with <tt>Creating
     a new SSL key for</tt> as well as the certificate fingerprint from the line that starts with <tt>Info: Certificate
     Request fingerprint (SHA256):</tt>. Plug those values into the form below.</p>
+
+<hr/>
+
+<p>If your only output is:</p>
+<span class="pre console">Exiting; no certificate found and waitforcert is disabled
+</span><br/>
+
+Then you need to clear out you Puppet client's SSL directory with <tt>rm -rf /etc/puppetlabs/puppet/ssl/*</tt> and re-run the command.
+<hr/>
 
 <p>For full instructions see the <a href="https://docs.puppetlabs.com/puppet/latest/reference/install_linux.html">upstream
     instructions</a>.</p>

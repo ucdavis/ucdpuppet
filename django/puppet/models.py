@@ -1,6 +1,5 @@
 from __future__ import unicode_literals
 
-import apt.progress.text
 from django.db import models
 from django.core.exceptions import ValidationError
 import django
@@ -10,11 +9,12 @@ import django.core.validators
 import re
 import os
 
-### The command shown to users in multiple different help locations
-puppet_run_command = '/opt/puppetlabs/bin/puppet agent --test --server=puppet.ucdavis.edu'
+from .utils import *
+
+puppet_run_command = 'sudo /opt/puppetlabs/bin/puppet agent --test --server=puppet.ucdavis.edu'
+puppet_run_command_initial = puppet_run_command + ' --waitforcert 0'
 
 sha256_re = re.compile(r'^[0-9A-Fa-f]{2}(:[0-9A-Fa-f]{2}){31}$')
-
 
 def validate_hash(value):
     if not re.match(sha256_re, value):
@@ -24,7 +24,6 @@ def validate_hash(value):
 
 
 HOSTNAME_LABEL_PATTERN = re.compile("(?!-)[A-Z\d-]+(?<!-)$", re.IGNORECASE)
-
 
 def full_domain_validator(hostname):
     """
@@ -121,7 +120,7 @@ class User(models.Model):
         return cls(loginid=loginid, display_name=displayName, mail=mail, ou=ou)
 
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s <%s>" % (self.display_name, self.mail)
 
 
@@ -148,7 +147,7 @@ class PuppetClass(models.Model):
     argument_allowed = models.BooleanField(default=False)
     argument = models.CharField(max_length=200, blank=True, default='')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.display_name
 
     class Meta:
@@ -168,12 +167,11 @@ class Host(models.Model):
     ### The directory the Puppet YAML files get written into.
     yaml_base = '/etc/puppetlabs/code/hieradata/nodes/'
 
-
     class Meta:
         ordering = ['fqdn']
 
 
-    def __unicode__(self):
+    def __str__(self):
         if self.loginid and self.loginid.mail:
             email = self.loginid.mail
         else:
@@ -201,7 +199,11 @@ class Host(models.Model):
         if os.path.isfile(self.yaml_file()):
             os.unlink(self.yaml_file())
 
+        fqdn = self.fqdn
+
         super(Host, self).delete()
+
+        return run_command(['/usr/bin/sudo', '/opt/puppetlabs/bin/puppet', 'cert', 'clean', '--color=false', fqdn])
 
 
 class HostAddForm(django.forms.ModelForm):
@@ -210,7 +212,7 @@ class HostAddForm(django.forms.ModelForm):
         fields = ['fqdn', 'hash', 'puppet_classes']
         help_texts = {
             'fqdn': 'The FQDN of the host, as shown by: <tt>facter fqdn</tt>',
-            'hash': 'The SHA256 hash shown during the first run of: <tt>%s</tt>' % puppet_run_command,
+            'hash': 'The SHA256 hash shown during the first run of: <tt>%s</tt>' % puppet_run_command_initial,
         }
         widgets = {'hash': django.forms.TextInput(attrs={'size': 98}),
                    'fqdn': django.forms.TextInput(attrs={'size': 55})}

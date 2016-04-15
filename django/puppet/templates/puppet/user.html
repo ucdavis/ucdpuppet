@@ -28,7 +28,7 @@
                     <td><a href="{% url 'edit-host' host.fqdn %}"><span class="host">{{ host.fqdn }}</span></a></td>
                     <td>
                         {% for class in host.puppet_classes.all %}
-                            <a href="{% url 'puppet_class' class.display_name %}">{{ class.display_name }}</a><br/>
+                            <a href="{% url 'puppet-class' class.display_name %}">{{ class.display_name }}</a><br/>
                         {% endfor %}
                     </td>
                     <td>
@@ -52,53 +52,60 @@
         </script>
     {% endif %}
 
-    <div class="form">
-        <div class="help">
-            <a href="#" id="instructions-toggle" onclick="toggleHelp(); return false;">Show documentation</a>
+    <div class="help">
+        <a href="#" id="instructions-toggle" onclick="toggleHelp(); return false;">Show documentation</a>
 
-            <script>
-                function toggleHelp($which) {
-                    var $id = document.getElementById('instructions');
-                    var $toggle = document.getElementById('instructions-toggle');
+        <script>
+            function toggleHelp($which) {
+                var $id = document.getElementById('instructions');
+                var $toggle = document.getElementById('instructions-toggle');
 
-                    if ($which in ['none', '']) {
-                        $id.style.display = $which;
-                    } else {
-                        if ($id.style.display == 'none') {
-                            $id.style.display = '';
-                        } else {
-                            $id.style.display = 'none';
-                        }
-                    }
-
-                    if ($id.style.display == 'none') {
-                        $toggle.innerHTML = "Show documentation"
-                    } else {
-                        $toggle.innerHTML = "Hide documentation"
-                    }
+                if ($which in ['none', '']) {
+                    $id.style.display = $which;
+                } else if ($id.style.display == 'none') {
+                    $id.style.display = '';
+                } else {
+                    $id.style.display = 'none';
                 }
-            </script>
+
+                if ($id.style.display == 'none') {
+                    $toggle.innerHTML = "Show documentation"
+                } else {
+                    $toggle.innerHTML = "Hide documentation"
+                }
+            }
+        </script>
 
             <span id="instructions" style="display: none;">
                 {% include 'puppet/instructions.html' %}
             </span>
-        </div>
+    </div>
+
+    <div class="form">
 
         {% if edit %}
             <h3>Edit the UCD Puppet classes applied to <span class="host">{{ edit.fqdn }}</span></h3>
         {% else %}
             <h3>Add a new host to UCD Puppet</h3>
         {% endif %}
-        <form method="post" action="">
-            {% csrf_token %}
-            <table>
-                {{ formset.as_table }}
-            </table>
-            {% if edit %}
-                <input type="submit" name="edit-host" value="Submit Changes"/>
-            {% else %}
-                <input type="submit" name="add-host" value="Add Host"/>
-            {% endif %}
+
+        {% if edit %}
+            <form method="post" action="{% url 'edit-host' edit.fqdn %}">
+        {% else %}
+            <form method="post" action="{% url 'add-host' %}">
+        {% endif %}
+
+        {% csrf_token %}
+        <table>
+            {{ formset.as_table }}
+        </table>
+
+        {% if edit %}
+            <input type="submit" name="edit-host" value="Submit Changes"/>
+        {% else %}
+            <input type="submit" name="add-host" value="Add Host"/>
+        {% endif %}
+
         </form>
     </div>
 

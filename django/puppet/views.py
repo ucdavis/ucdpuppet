@@ -5,18 +5,13 @@ import django.forms
 from django.contrib import messages
 import django.core.exceptions
 import django.http
+from django.db import transaction
 
-import subprocess
 import datetime
 import ipware.ip
 
 from .models import *
-
-
-def run_command(args):
-    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    return p.communicate()
-
+from .utils import *
 
 def messages_traceback(request, comment=None):
     base = 'Sorry, a serious error occurred, please copy this box and send it to <tt>ucd-puppet-admins@ucdavis.edu</tt>'
@@ -39,7 +34,7 @@ def get_loginid(request):
         return request.META['REMOTE_USER']
 
 
-def get_user(request):
+def get_user_info(request):
     previous_login = None
     previous_ip = None
     user = None
@@ -78,7 +73,7 @@ def get_user(request):
 
 
 def validate_host(request, formset, user):
-    fqdn = formset['fqdn'].value()
+    fqdn = formset.cleaned_data['fqdn']
 
     # Before the host gets saved to the database, make sure it has been signed by Puppet
     out, err = run_command(['/usr/bin/sudo', '/opt/puppetlabs/bin/puppet', 'cert', 'list', '--color=false', fqdn])
@@ -86,7 +81,7 @@ def validate_host(request, formset, user):
     if err and err.startswith('Error: Could not find a certificate for'):
         messages.warning(request,
                          'The Puppet Server was unable to find a certificate signing request from <tt>%s</tt>.<br/>Did you run <tt>%s</tt>?' % (
-                             fqdn, puppet_run_command),
+                             fqdn, puppet_run_command_initial),
                          extra_tags='safe')
         return False
     elif err:
@@ -100,8 +95,12 @@ def validate_host(request, formset, user):
         msg_admins(request, 'A certificate for this FQDN is already signed:<pre>%s</pre>' % out)
         return False
 
-    if data[2] != formset['hash'].value():
-        messages.error(request, 'Your specified hash does not match the hash Puppet has for your host.')
+    if data[0] == '-':
+        msg_admins(request, "The certificate for this host has been revoked on the server. You may need to clear out Puppet's SSL directory <tt>rm -rf /etc/puppetlabs/puppet/ssl/*</tt> and re-run the Puppet command <tt>%s</tt>." % puppet_run_command_initial)
+        return False
+
+    if data[2] != formset.cleaned_data['hash']:
+        msg_admins(request, 'Your specified hash does not match the hash Puppet has for your host.')
         return False
 
     if data[0] != '"' + fqdn + '"':
@@ -120,17 +119,19 @@ def validate_host(request, formset, user):
     # Notice: Removing file Puppet::SSL::CertificateRequest puppet-test.metro.ucdavis.edu at '/etc/puppetlabs/puppet/ssl/ca/requests/puppet-test.metro.ucdavis.edu.pem'
 
     try:
-        new_host = formset.save(commit=True)
-        new_host.loginid = user
-        new_host.save()
+        with transaction.atomic():
+            new_host = formset.save(commit=True)
+            new_host.loginid = user
+            new_host.save()
     except:
         messages_traceback(request)
         # If there is a write error in the YAML in formset.save(commit=True) then we need to delete the object that gets saved to the database.
         Host.objects.get(fqdn=fqdn).delete()
 
     messages.success(request,
-                     "Host %s added to your profile. You can run <tt>%s</tt> to apply the classes immediately." % (new_host.fqdn, puppet_run_command),
+                     "Host %s added to your profile. Please run <tt>%s</tt> to finish you Puppet client configuration." % (new_host.fqdn, puppet_run_command),
                      extra_tags='safe')
+
     # Redirect back to the index so the user gets a blank form, as well as make page reload not attempt to re-add the host.
     return redirect('index')
 
@@ -153,12 +154,13 @@ def edit_user(request, loginid):
     if request.method == 'POST' and 'edit-user' in request.POST:
         formset = formset(request.POST)
         if formset.is_valid():
-            user = formset.save(commit=False)
-            user.loginid = loginid
-            user.last_login = datetime.datetime.now()
-            user.ip_address = ipware.ip.get_ip(request)
-            user.departmental_account = True
-            user.save()
+            with transaction.atomic():
+                user = formset.save(commit=False)
+                user.loginid = loginid
+                user.last_login = datetime.datetime.now()
+                user.ip_address = ipware.ip.get_ip(request)
+                user.departmental_account = True
+                user.save()
 
             return redirect('index')
         else:
@@ -171,25 +173,32 @@ def edit_user(request, loginid):
                   )
 
 
-def index(request, edit_existing=None):
-    user, previous_login, previous_ip, err = get_user(request)
+def index(request):
+    user, previous_login, previous_ip, err = get_user_info(request)
     if err:
         return err
 
-    formset = host_form = django.forms.models.modelform_factory(Host, form=HostAddForm)
+    return render(request,
+                  'puppet/user.html',
+                  {'hosts': Host.objects.filter(loginid=user),
+                   'user': user,
+                   'formset': django.forms.models.modelform_factory(Host, form=HostAddForm),
+                   'previous_login': previous_login,
+                   'previous_ip': previous_ip,
+                   'puppet_classes': PuppetClass.objects.all(),
+                   'puppet_run_command_initial': puppet_run_command_initial,
+                   }
+                  )
 
-    if request.method == 'POST' and 'add-host' in request.POST:
-        formset = host_form(request.POST)
-        if formset.is_valid():
-            status = validate_host(request, formset, user)
-            if status:
-                return status
-        else:
-            messages.error(request, 'Unable to add host, please fix the errors below.')
 
-    elif request.method == 'POST' and 'edit-host' in request.POST:
-        host = get_object_or_404(Host, loginid=user, fqdn=request.POST['fqdn'])
+def edit_host(request, fqdn=None):
+    user, previous_login, previous_ip, err = get_user_info(request)
+    if err:
+        return err
 
+    host = get_object_or_404(Host, fqdn=fqdn, loginid=user)
+
+    if request.method == 'POST' and 'edit-host' in request.POST:
         p_c = PuppetClass.objects.filter(pk__in=request.POST.getlist('puppet_classes'))
         host.puppet_classes = p_c
         try:
@@ -198,52 +207,75 @@ def index(request, edit_existing=None):
             messages_traceback(request)
         else:
             messages.success(request,
-                             "Updated host %s. Run <tt>%s</tt> to immediately update your host." % (host.fqdn, puppet_run_command),
+                             "Updated host %s. Run <tt>%s</tt> to immediately update your host." % (
+                             host.fqdn, puppet_run_command),
                              extra_tags='safe')
+
             return redirect('index')
 
-    elif edit_existing:
-        # edit_host() takes care of making sure that the host exists and belongs to the user
-        host_form = django.forms.models.modelform_factory(Host, form=HostAddForm, fields=('fqdn', 'puppet_classes',),
-                                                          widgets={'fqdn': django.forms.HiddenInput()})
-        formset = host_form(None, instance=edit_existing)
-
-    hosts = Host.objects.filter(loginid=user)
+    host_form = django.forms.models.modelform_factory(Host, form=HostAddForm, fields=('fqdn', 'puppet_classes',),
+                                                      widgets={'fqdn': django.forms.HiddenInput()})
+    formset = host_form(None, instance=host)
 
     return render(request,
                   'puppet/user.html',
-                  {'hosts': hosts,
+                  {'hosts': Host.objects.filter(loginid=user),
                    'user': user,
+                   'formset': formset,
                    'previous_login': previous_login,
                    'previous_ip': previous_ip,
-                   'formset': formset,
-                   'edit': edit_existing,
+                   'edit': host,
                    'puppet_classes': PuppetClass.objects.all(),
-                   'puppet_run_command': puppet_run_command,
+                   'puppet_run_command_initial': puppet_run_command_initial,
                    }
                   )
 
 
-def edit_host(request, fqdn):
-    user, previous_login, previous_ip, err = get_user(request)
+def add_host(request, fqdn=None):
+    user, previous_login, previous_ip, err = get_user_info(request)
     if err:
         return err
 
-    host = get_object_or_404(Host, fqdn=fqdn, loginid=user)
+    if request.method != 'POST' or 'add-host' not in request.POST:
+        raise django.http.Http404()
 
-    return index(request, edit_existing=host)
+    host_form = django.forms.models.modelform_factory(Host, form=HostAddForm)
+    formset = host_form(request.POST)
+
+    if formset.is_valid():
+        status = validate_host(request, formset, user)
+        if status:
+            return status
+    else:
+        # formset not valid
+        messages.error(request, 'Unable to add host, please fix the errors below.')
+
+    return render(request,
+                  'puppet/user.html',
+                  {'hosts': Host.objects.filter(loginid=user),
+                   'user': user,
+                   'previous_login': previous_login,
+                   'previous_ip': previous_ip,
+                   'formset': formset,
+                   'edit': edit_host,
+                   'puppet_classes': PuppetClass.objects.all(),
+                   'puppet_run_command_initial': puppet_run_command_initial,
+                   }
+                  )
 
 
 def delete_host(request, fqdn):
-    user, previous_login, previous_ip, err = get_user(request)
+    user, previous_login, previous_ip, err = get_user_info(request)
     if err:
         return err
 
     host = get_object_or_404(Host, fqdn=fqdn, loginid=user)
 
-    host.delete()
-    out, err = run_command(['/usr/bin/sudo', '/opt/puppetlabs/bin/puppet', 'cert', 'clean', '--color=false', fqdn])
-    messages.success(request, 'Host %s deleted.<br/><pre>%s</pre>' % (host.fqdn, out), extra_tags='safe')
+    out, err = host.delete()
+    if err:
+        msg_admins(request, 'Received unexpected output running cert clean for %s: <br/>%s<br/>%s' % (fqdn, out, err))
+    else:
+        messages.success(request, 'Host %s deleted successfully and removed from UCD Puppet.<br/>' % host.fqdn, extra_tags='safe')
 
     return redirect('index')
 

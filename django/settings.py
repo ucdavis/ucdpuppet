@@ -90,6 +90,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'django',
         'USER': 'django',
+        # No, this is not the database password, but it is an example of a password I would use.
         'PASSWORD': 'Wewie3Ishi8owairae8hie',
         'HOST': 'localhost',
         #'PORT': '',

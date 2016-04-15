@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#!/var/www/django_www_dev/pyenv_django/bin/python3
+
 import os
 import sys
 
