@@ -10,6 +10,7 @@ sudo apt-get install puppet-agent
 
 <p>For RedHat/CentOS/etc newer than version 5<sup><b>*</b></sup>:
 <pre>
+sudo rpm -Uvh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-$(lsb_release -sr | awk -F. '{print $1}').noarch.rpm
 sudo yum install puppet-agent
 </pre>
 </p>
