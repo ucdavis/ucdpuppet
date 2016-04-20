@@ -4,7 +4,7 @@ The intent of this repo is to provide a set of simple modules to help increase t
 
 UCD affiliates can self sign up at https://puppet.ucdavis.edu
 
-The modules so far:
+The modules so far:  
   automatic_updates - applies security patches without user intervention  
   fwsshonly - implements a firewall for IPv4 and IPv6 that only allows ICMP and ssh incoming  
   unbound - installs unbound (and if necessary) configures NetworkManager to use it  
