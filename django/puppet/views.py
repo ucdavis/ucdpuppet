@@ -13,6 +13,11 @@ import ipware.ip
 from .models import *
 from .utils import *
 
+def get_current_git_commit():
+    out, err = run_command(['/usr/bin/git', 'rev-parse', 'HEAD'], cwd=ucdpuppet_dir)
+    return out
+
+
 def messages_traceback(request, comment=None):
     base = 'Sorry, a serious error occurred, please copy this box and send it to <tt>ucd-puppet-admins@ucdavis.edu</tt>'
 
@@ -187,6 +192,7 @@ def index(request):
                    'previous_ip': previous_ip,
                    'puppet_classes': PuppetClass.objects.all(),
                    'puppet_run_command_initial': puppet_run_command_initial,
+                   'git_commit': get_current_git_commit(),
                    }
                   )
 
@@ -227,6 +233,7 @@ def edit_host(request, fqdn=None):
                    'edit': host,
                    'puppet_classes': PuppetClass.objects.all(),
                    'puppet_run_command_initial': puppet_run_command_initial,
+                   'git_commit': get_current_git_commit(),
                    }
                   )
 
@@ -260,6 +267,7 @@ def add_host(request, fqdn=None):
                    'edit': edit_host,
                    'puppet_classes': PuppetClass.objects.all(),
                    'puppet_run_command_initial': puppet_run_command_initial,
+                   'git_commit': get_current_git_commit(),
                    }
                   )
 

@@ -14,6 +14,8 @@ from .utils import *
 puppet_run_command = 'sudo /opt/puppetlabs/bin/puppet agent --test --server=puppet.ucdavis.edu'
 puppet_run_command_initial = puppet_run_command + ' --waitforcert 0'
 
+ucdpuppet_dir = '/etc/puppetlabs/code/environments/production/modules/ucdpuppet'
+
 sha256_re = re.compile(r'^[0-9A-Fa-f]{2}(:[0-9A-Fa-f]{2}){31}$')
 
 def validate_hash(value):

@@ -70,6 +70,19 @@ tt {
     color: green;
 }
 
+.footer-github {
+    position: absolute;
+    right: 1em;
+
+    text-align: right;
+    margin: 1em auto;
+}
+
+.footer-github div {
+    //margin: 0px 1em;
+    // display: inline-block;
+}
+
 /*body {*/
     /*font: 400 19px VT323, monospace;*/
     /*//position: relative;*/
