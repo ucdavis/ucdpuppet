@@ -12,10 +12,12 @@ class ucdpuppet::automatic_updates
 {
 	case $operatingsystem {
 		/^(Debian|Ubuntu)$/: {
-			package { [unattended-upgrades]: ensure => latest }
-			file { "/etc/apt/apt.conf.d/20auto-upgrades":
-	 	   	source => "puppet:///modules/ucdpuppet/auto-upgrade",
-			}
+			include apt
+			include unattended_upgrades
+#			package { [unattended-upgrades]: ensure => latest }
+#			file { "/etc/apt/apt.conf.d/20auto-upgrades":
+#	 	   	source => "puppet:///modules/ucdpuppet/auto-upgrade",
+#			}
 		}
 		/^(CentOS|RedHat)$/: {
 			case $operatingsystemrelease {
