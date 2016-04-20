@@ -20,6 +20,9 @@ wget https://yum.puppetlabs.com/puppetlabs-release-pc1-el-$(lsb_release -sr | aw
 rpm -Uvh puppetlabs-release-pc1-el-$(lsb_release -sr | awk -F. '{print $1}').noarch.rpm
 yum install puppet-agent
 </pre>
+</p>
+
+<p>For other Linux flavors see the <a href="https://docs.puppet.com/guides/puppetlabs_package_repositories.html">upstream documentation</a>.</p>
 
 <hr>Now, run the agent:
 <pre>
