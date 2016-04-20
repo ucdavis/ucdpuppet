@@ -8,8 +8,9 @@ sudo apt-get install puppet-agent
 </pre>
 </p>
 
-<p>For RedHat/CentOS/etc newer than version 5<sup><b>*</b></sup>:
+<p>For RedHat/CentOS/etc newer than version 5:
 <pre>
+sudo yum install redhat-lsb-core
 sudo yum install https://yum.puppetlabs.com/puppetlabs-release-pc1-el-$(lsb_release -sr | awk -F. '{print $1}').noarch.rpm
 sudo yum install puppet-agent
 </pre>
@@ -17,9 +18,10 @@ sudo yum install puppet-agent
 
 <p>For RHEL version 5:
 <pre>
+sudo yum install redhat-lsb-core
 wget https://yum.puppetlabs.com/puppetlabs-release-pc1-el-$(lsb_release -sr | awk -F. '{print $1}').noarch.rpm
-rpm -Uvh puppetlabs-release-pc1-el-$(lsb_release -sr | awk -F. '{print $1}').noarch.rpm
-yum install puppet-agent
+sudo rpm -Uvh puppetlabs-release-pc1-el-$(lsb_release -sr | awk -F. '{print $1}').noarch.rpm
+sudo yum install puppet-agent
 </pre>
 </p>
 
@@ -60,5 +62,3 @@ Then you need to clear out you Puppet client's SSL directory with <tt>rm -rf /et
 
 <p>For full instructions see the <a href="https://docs.puppetlabs.com/puppet/latest/reference/install_linux.html">upstream
     instructions</a>.</p>
-
-<p><b>Note:</b> <tt>lsb_release</tt> is available in the <tt>redhat-lsb-core</tt> package.</p>
