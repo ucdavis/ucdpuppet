@@ -28,6 +28,9 @@ class ucdpuppet::unbound {
 class ucdpuppet::unboundnetworkmanager inherits ucdpuppet::unbound {
 	case $operatingsystem {
 		/^(Debian|Ubuntu)$/: { 
+			file { [ '/etc/NetworkManager' ]:
+    			ensure => 'directory',
+  			}
 			file { "/etc/NetworkManager/NetworkManager.conf":
 				source => "puppet:///modules/ucdpuppet/NetworkManager.conf"
 			}
