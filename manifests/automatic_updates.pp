@@ -26,12 +26,17 @@ class ucdpuppet::automatic_updates
 					package { [yum-autoupdate]: ensure => latest }
 				}
 				/^7.*/: { 
-					package { [dnf-automatic]: ensure => latest }
+					package { [yum-cron]: ensure => latest }
+					augeas { yum-cron:
+						context => "/files/etc/yum/yum-cron.conf/commands",
+						changes => [ "set update_cmd security","set apply_updates yes"],
+					}
 				}
 				default: {
 					notify { "OS ${operatingsystem} release $operatingsystemrelease is not supported, to fix go to http://github.com/ucdavis/ucdpuppet and open an issue or a pull request": }
 				}
 			}
+		}
 		default: {
 			notify { "operatingsystem=${operatingsystem} is not supported, to fix go to http://github.com/ucdavis/ucdpuppet and open an issue or a pull request": }
 		}
