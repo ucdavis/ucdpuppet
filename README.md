@@ -11,7 +11,7 @@ The modules so far:
   sshnopassword - Disables password authentication and configures ssh client to check DNS for host keys  
   useucdpuppet - Changes the server line in puppet.conf to use puppet.ucdavis.edu  
 
-These modules assume the following puppet forge modules are installed:
+These modules assume the following puppet forge modules are installed:  
   puppet-unattended_upgrades (v1.1.1)  
   puppetlabs-apt (v2.2.2)  
   puppetlabs-firewall (v1.8.0)  
