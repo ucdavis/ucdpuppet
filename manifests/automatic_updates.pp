@@ -23,7 +23,11 @@ class ucdpuppet::automatic_updates
 					package { [yum-autoupdate]: ensure => latest }
 				}
 				/^6.*/: {
-					package { [yum-autoupdate]: ensure => latest }
+					package { [yum-cron]: ensure => latest }
+					augeas { yum-cron:
+						context => "/files/etc/yum/yum-cron.conf/commands",
+						changes => [ "set update_cmd security","set apply_updates yes"],
+					}
 				}
 				/^7.*/: { 
 					package { [yum-cron]: ensure => latest }
