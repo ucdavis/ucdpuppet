@@ -18,7 +18,9 @@ class ucdpuppet::unbound {
 		/^(Debian|Ubuntu)$/: { 
 			package { [ unbound ]: ensure => latest }
 		}
-		#'RedHat', 'CentOS': { ... }
+		'RedHat', 'CentOS': { 
+			package { [ unbound ]: ensure => latest }
+		}
 		default: {
 			 notify { "OS ${operatingsystem} is not supported, to fix go to http://github.com/ucdavis/ucdpuppet and open an issue or a pull request": }
 		}
@@ -34,6 +36,9 @@ class ucdpuppet::unboundnetworkmanager inherits ucdpuppet::unbound {
 			file { "/etc/NetworkManager/NetworkManager.conf":
 				source => "puppet:///modules/ucdpuppet/NetworkManager.conf"
 			}
+		}
+		'RedHat', 'CentOS': { 
+		# do nothing
 		}
 		default: {
 			 notify { "OS ${operatingsystem} is not supported, to fix go to http://github.com/ucdavis/ucdpuppet and open an issue or a pull request": }

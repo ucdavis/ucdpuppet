@@ -17,8 +17,23 @@ class ucdpuppet::automatic_updates
 	 	   	source => "puppet:///modules/ucdpuppet/auto-upgrade",
 			}
 		}
+		/^(CentOS|RedHat)$/: {
+			case $operatingsystemrelease {
+				/^5.*/: {
+					package { [yum-autoupdate]: ensure => latest }
+				}
+				/^6.*/: {
+					package { [yum-autoupdate]: ensure => latest }
+				}
+				/^7.*/: { 
+					package { [dnf-automatic]: ensure => latest }
+				}
+				default: {
+					notify { "OS ${operatingsystem} release $operatingsystemrelease is not supported, to fix go to http://github.com/ucdavis/ucdpuppet and open an issue or a pull request": }
+				}
+			}
 		default: {
-			notify { "OS ${operatingsystem} is not supported, to fix go to http://github.com/ucdavis/ucdpuppet and open an issue or a pull request": }
+			notify { "operatingsystem=${operatingsystem} is not supported, to fix go to http://github.com/ucdavis/ucdpuppet and open an issue or a pull request": }
 		}
 	}
 }
