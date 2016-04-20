@@ -1,6 +1,8 @@
 #part of ucdpuppet::fwsshonly
 class ucdpuppet::fw_pre {
-	package { [ iptables-persistent ]: ensure => latest }
+	# this allows all linux platforms to install the correct package
+	# to enable firewall rules to persist across reboots
+	class { 'firewall': }
 	firewall { '000 accept all icmp':
 		proto   => 'icmp',
 		action  => 'accept',
