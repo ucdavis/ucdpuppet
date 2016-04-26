@@ -55,4 +55,8 @@ flycheck_*.el
 # projectiles files
 .projectile
 
+# Omen Wild
+.idea/
+*.pyc
+
 # mode: gitignore;

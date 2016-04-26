@@ -1,0 +1,18 @@
+<table>
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+    {% for pc in puppet_classes %}
+        <tr>
+            <td><span class="puppet-class-name" style="font-size: 1em">{{ pc.display_name }}</span><br/>
+                ({{ pc.full_puppet_class_name }})
+            </td>
+            <td>
+                {{ pc.description }}
+            </td>
+        </tr>
+    {% endfor %}
+</table>

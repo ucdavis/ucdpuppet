@@ -1,0 +1,14 @@
+{% extends "puppet/base.html" %}
+
+{% block title %}UCD Puppet Module Information for {{ pc.display_name }}{% endblock %}
+
+{% block header %}
+    UCD Puppet Module Information for {{ pc.display_name }}
+{% endblock %}
+
+{% block body %}
+<span class="puppet-class-name">{{ pc.display_name }}</span> ({{ pc.full_puppet_class_name }})
+    <p class="puppet-class-description">
+    {{ pc.description }}
+    </p>
+{% endblock %}
