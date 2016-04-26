@@ -1,0 +1,64 @@
+<p>
+    UCD Puppet basic installation instructions for Debian/Ubuntu family boxes
+<pre>
+wget https://apt.puppetlabs.com/puppetlabs-release-pc1-$(lsb_release -sc | sed 's/^\(unstable\|sid\)$/jessie/').deb
+sudo dpkg -i puppetlabs-release-pc1-$(lsb_release -sc | sed 's/^\(unstable\|sid\)$/jessie/').deb
+sudo apt-get update
+sudo apt-get install puppet-agent
+</pre>
+</p>
+
+<p>For RedHat/CentOS/etc newer than version 5:
+<pre>
+sudo yum install redhat-lsb-core
+sudo yum install https://yum.puppetlabs.com/puppetlabs-release-pc1-el-$(lsb_release -sr | awk -F. '{print $1}').noarch.rpm
+sudo yum install puppet-agent
+</pre>
+</p>
+
+<p>For RHEL version 5:
+<pre>
+sudo yum install redhat-lsb-core
+wget https://yum.puppetlabs.com/puppetlabs-release-pc1-el-$(lsb_release -sr | awk -F. '{print $1}').noarch.rpm
+sudo rpm -Uvh puppetlabs-release-pc1-el-$(lsb_release -sr | awk -F. '{print $1}').noarch.rpm
+sudo yum install puppet-agent
+</pre>
+</p>
+
+<p>For other Linux flavors see the <a href="https://docs.puppet.com/guides/puppetlabs_package_repositories.html">upstream documentation</a>.</p>
+
+<hr>Now, run the agent:
+<pre>
+{{ puppet_run_command_initial }}
+</pre>
+</p>
+
+<p class="pre"><span class="console">
+root@puppet-test:~# {{ puppet_run_command_initial }}</span><span
+        class="console console-green">
+Info: Creating a new SSL key for puppet-test.metro.ucdavis.edu
+Info: Caching certificate for ca
+Info: csr_attributes file loading from /etc/puppetlabs/puppet/csr_attributes.yaml
+Info: Creating a new SSL certificate request for puppet-test.metro.ucdavis.edu
+Info: Certificate Request fingerprint (SHA256): 6E:69:90:1B:38:33:C8:CA:1F:99:3C:81:60:BB:BA:D4:A2:D4:39:94:E5:E8:7C:2C:F0:A5:58:2F:8B:93:E9:81
+Info: Caching certificate for ca</span><span class="console">
+Exiting; no certificate found and waitforcert is disabled
+root@puppet-test:~#
+</span>
+</p>
+
+<p>Pay attention to the output, you will need the FQDN from the line that starts with <tt>Creating
+    a new SSL key for</tt> as well as the certificate fingerprint from the line that starts with <tt>Info: Certificate
+    Request fingerprint (SHA256):</tt>. Plug those values into the form below.</p>
+
+<hr/>
+
+<p>If your only output is:</p>
+<span class="pre console">Exiting; no certificate found and waitforcert is disabled
+</span><br/>
+
+Then you need to clear out you Puppet client's SSL directory with <tt>rm -rf /etc/puppetlabs/puppet/ssl/*</tt> and re-run the command.
+<hr/>
+
+<p>For full instructions see the <a href="https://docs.puppetlabs.com/puppet/latest/reference/install_linux.html">upstream
+    instructions</a>.</p>

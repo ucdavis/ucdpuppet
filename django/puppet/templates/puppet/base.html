@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <link rel="stylesheet" href="/static/css/puppet.css">
+
+    <link href="https://fonts.googleapis.com/css?family=VT323" rel="stylesheet" type="text/css">
+
+
+    <title>UCD Puppet: {% block title %}{% endblock %}</title>
+</head>
+<body>
+
+<h3 align="center">{% block header %}{% endblock %}</h3>
+
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="message-{{ message.level_tag }}"{% endif %}>
+                {% if 'safe' in message.tags %}{{ message|safe }}{% else %}{{ message }}{% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% block body %}{% endblock %}
+
+{% include 'puppet/footer.html' %}
+
+</body>
+</html>

@@ -1,0 +1,114 @@
+{% extends "puppet/base.html" %}
+
+{% block title %}UCD Puppet for {{ user.display_name }}{% endblock %}
+
+{% block header %}
+    UCD Puppet for {{ user }}
+{% endblock %}
+
+{% block body %}
+    {% if previous_login %}
+        <div class="login">You last logged in from {{ previous_ip }} at {{ previous_login }}</div>
+    {% else %}
+        <div class="first-login">This is your first visit.</div>
+    {% endif %}
+
+    {% if hosts %}
+        <table>
+            <caption>Your current Puppet hosts</caption>
+            <thead>
+            <tr>
+                <th>FQDN</th>
+                <th>Puppet Classes Applied</th>
+                <th>Delete Host</th>
+            </tr>
+            </thead>
+            {% for host in hosts %}
+                <tr>
+                    <td><a href="{% url 'edit-host' host.fqdn %}"><span class="host">{{ host.fqdn }}</span></a></td>
+                    <td>
+                        {% for class in host.puppet_classes.all %}
+                            <a href="{% url 'puppet-class' class.display_name %}">{{ class.display_name }}</a><br/>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <form method="post" action="{% url 'delete-host' host.fqdn %}">
+                            {% csrf_token %}
+                            <input type="submit" name='delete-host' value="Delete"
+                                   onclick="return confirm('Are you sure you want to delete {{ host.fqdn }}?')"/>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>You have no hosts currently Puppeted. Please add one using the form below the instructions.</p>
+        <script>
+            {% if not messages %}
+                document.addEventListener("DOMContentLoaded", function (event) {
+                toggleHelp('');
+            {% endif %}
+            });
+        </script>
+    {% endif %}
+
+    <div class="help">
+        <a href="#" id="instructions-toggle" onclick="toggleHelp(); return false;">Show documentation</a>
+
+        <script>
+            function toggleHelp($which) {
+                var $id = document.getElementById('instructions');
+                var $toggle = document.getElementById('instructions-toggle');
+
+                if ($which in ['none', '']) {
+                    $id.style.display = $which;
+                } else if ($id.style.display == 'none') {
+                    $id.style.display = '';
+                } else {
+                    $id.style.display = 'none';
+                }
+
+                if ($id.style.display == 'none') {
+                    $toggle.innerHTML = "Show documentation"
+                } else {
+                    $toggle.innerHTML = "Hide documentation"
+                }
+            }
+        </script>
+
+            <span id="instructions" style="display: none;">
+                {% include 'puppet/instructions.html' %}
+            </span>
+    </div>
+
+    <div class="form">
+
+        {% if edit %}
+            <h3>Edit the UCD Puppet classes applied to <span class="host">{{ edit.fqdn }}</span></h3>
+        {% else %}
+            <h3>Add a new host to UCD Puppet</h3>
+        {% endif %}
+
+        {% if edit %}
+            <form method="post" action="{% url 'edit-host' edit.fqdn %}">
+        {% else %}
+            <form method="post" action="{% url 'add-host' %}">
+        {% endif %}
+
+        {% csrf_token %}
+        <table>
+            {{ formset.as_table }}
+        </table>
+
+        {% if edit %}
+            <input type="submit" name="edit-host" value="Submit Changes"/>
+        {% else %}
+            <input type="submit" name="add-host" value="Add Host"/>
+        {% endif %}
+
+        </form>
+    </div>
+
+    {% include 'puppet/classes.html' %}
+
+{% endblock %}

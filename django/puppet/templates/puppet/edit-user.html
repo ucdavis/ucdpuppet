@@ -1,0 +1,19 @@
+{% extends "puppet/base.html" %}
+
+{% block title %}Add LoginID {{ loginid }}{% endblock %}
+
+{% block header %}
+    Add LoginID {{ loginid }}
+{% endblock %}
+
+{% block body %}
+    <form method="post" action="">
+        {% csrf_token %}
+        <table>
+            <caption>Please supply the following information for the departmental account {{ loginid }}</caption>
+            {{ formset.as_table }}
+        </table>
+            <input type="submit" name="edit-user" value="Submit Values"/>
+    </form>
+
+{% endblock %}
