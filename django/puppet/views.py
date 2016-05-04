@@ -137,7 +137,7 @@ def validate_host(request, formset, user):
         Host.objects.get(fqdn=fqdn).delete()
 
     messages.success(request,
-                     "Host %s added to your profile. Please run <tt>%s</tt> to finish you Puppet client configuration." % (new_host.fqdn, puppet['run_command']),
+                     "Host %s added to your profile. Please run <tt>%s</tt> to finish you Puppet client configuration." % (new_host.fqdn, puppet['command']),
                      extra_tags='safe')
 
     # Redirect back to the index so the user gets a blank form, as well as make page reload not attempt to re-add the host.
@@ -217,7 +217,7 @@ def edit_host(request, fqdn=None):
         else:
             messages.success(request,
                              "Updated host %s. Run <tt>%s</tt> to immediately update your host." % (
-                             host.fqdn, puppet['run_command']),
+                             host.fqdn, puppet['command']),
                              extra_tags='safe')
 
             return redirect('index')
