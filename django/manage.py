@@ -1,4 +1,4 @@
-#!/srv/ucdpuppet/django/pyenv_django/bin/python3
+#!/srv/django_dev/pyenv_django/bin/python3
 
 import os
 import sys
