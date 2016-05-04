@@ -213,7 +213,7 @@ class HostAddForm(django.forms.ModelForm):
         model = Host
         fields = ['fqdn', 'hash', 'puppet_classes']
         help_texts = {
-            'fqdn': 'The FQDN of the host, as shown by: <tt>facter fqdn</tt>',
+            'fqdn': 'The FQDN of the host, as shown by: <tt>/opt/puppetlabs/bin/facter fqdn</tt>',
             'hash': 'The SHA256 hash shown during the first run of: <tt>%s</tt>' % puppet_run_command_initial,
         }
         widgets = {'hash': django.forms.TextInput(attrs={'size': 98}),
