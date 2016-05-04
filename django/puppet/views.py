@@ -87,7 +87,7 @@ def validate_host(request, formset, user):
     if err and err.startswith('Error: Could not find a certificate for'):
         messages.warning(request,
                          'The Puppet Server was unable to find a certificate signing request from <tt>%s</tt>.<br/>Did you run <tt>%s</tt>?' % (
-                             fqdn, puppet_run_command_initial),
+                             fqdn, puppet['command_initial']),
                          extra_tags='safe')
         return False
     elif err:
@@ -104,7 +104,7 @@ def validate_host(request, formset, user):
         return False
 
     if data[0] == '-':
-        msg_admins(request, "The certificate for this host has been revoked on the server. You may need to clear out Puppet's SSL directory <tt>rm -rf /etc/puppetlabs/puppet/ssl/*</tt> and re-run the Puppet command <tt>%s</tt>." % puppet_run_command_initial)
+        msg_admins(request, "The certificate for this host has been revoked on the server. You may need to clear out Puppet's SSL directory <tt>%s</tt> and re-run the Puppet command <tt>%s</tt>." % (puppet['clear_certs'], puppet['command_initial']))
         return False
 
     if data[2] != formset.cleaned_data['hash']:
@@ -137,7 +137,7 @@ def validate_host(request, formset, user):
         Host.objects.get(fqdn=fqdn).delete()
 
     messages.success(request,
-                     "Host %s added to your profile. Please run <tt>%s</tt> to finish you Puppet client configuration." % (new_host.fqdn, puppet_run_command),
+                     "Host %s added to your profile. Please run <tt>%s</tt> to finish you Puppet client configuration." % (new_host.fqdn, puppet['run_command']),
                      extra_tags='safe')
 
     # Redirect back to the index so the user gets a blank form, as well as make page reload not attempt to re-add the host.
@@ -194,7 +194,7 @@ def index(request):
                    'previous_login': previous_login,
                    'previous_ip': previous_ip,
                    'puppet_classes': PuppetClass.objects.all(),
-                   'puppet_run_command_initial': puppet_run_command_initial,
+                   'puppet': puppet,
                    'git_commit': get_current_git_commit(),
                    }
                   )
@@ -217,7 +217,7 @@ def edit_host(request, fqdn=None):
         else:
             messages.success(request,
                              "Updated host %s. Run <tt>%s</tt> to immediately update your host." % (
-                             host.fqdn, puppet_run_command),
+                             host.fqdn, puppet['run_command']),
                              extra_tags='safe')
 
             return redirect('index')
@@ -235,7 +235,7 @@ def edit_host(request, fqdn=None):
                    'previous_ip': previous_ip,
                    'edit': host,
                    'puppet_classes': PuppetClass.objects.all(),
-                   'puppet_run_command_initial': puppet_run_command_initial,
+                   'puppet': puppet,
                    'git_commit': get_current_git_commit(),
                    }
                   )
@@ -269,7 +269,7 @@ def add_host(request, fqdn=None):
                    'formset': formset,
                    'edit': edit_host,
                    'puppet_classes': PuppetClass.objects.all(),
-                   'puppet_run_command_initial': puppet_run_command_initial,
+                   'puppet': puppet,
                    'git_commit': get_current_git_commit(),
                    }
                   )

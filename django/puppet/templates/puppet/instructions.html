@@ -29,12 +29,12 @@ sudo yum install puppet-agent
 
 <hr>Now, run the agent:
 <pre>
-{{ puppet_run_command_initial }}
+{{ puppet.command_initial }}
 </pre>
 </p>
 
 <p class="pre"><span class="console">
-root@puppet-test:~# {{ puppet_run_command_initial }}</span><span class="console console-green">
+root@puppet-test:~# {{ puppet.command_initial }}</span><span class="console console-green">
 Info: Creating a new SSL key for puppet-test.metro.ucdavis.edu
 Info: Caching certificate for ca
 Info: csr_attributes file loading from /etc/puppetlabs/puppet/csr_attributes.yaml
@@ -56,7 +56,7 @@ root@puppet-test:~#
 <span class="pre console">Exiting; no certificate found and waitforcert is disabled
 </span><br/>
 
-Then you need to clear out you Puppet client's SSL directory with <tt>sudo rm -rf /etc/puppetlabs/puppet/ssl/*</tt> and re-run the command.
+Then you need to clear out you Puppet client's SSL directory with <tt>{{ puppet.clear_certs }}</tt> and re-run the command.
 <hr/>
 
 <p>For full instructions see the <a href="https://docs.puppetlabs.com/puppet/latest/reference/install_linux.html">upstream

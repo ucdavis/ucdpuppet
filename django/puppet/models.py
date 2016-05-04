@@ -11,8 +11,10 @@ import os
 
 from .utils import *
 
-puppet_run_command = 'sudo /opt/puppetlabs/bin/puppet agent --test --server=puppet.ucdavis.edu'
-puppet_run_command_initial = puppet_run_command + ' --waitforcert 0'
+puppet = {}
+puppet['command'] = 'sudo /opt/puppetlabs/bin/puppet agent --test --server=puppet.ucdavis.edu'
+puppet['command_initial'] = puppet['command'] + ' --waitforcert 0'
+puppet['clear_certs'] = 'sudo rm -rf /etc/puppetlabs/puppet/ssl/*'
 
 ucdpuppet_dir = '/etc/puppetlabs/code/environments/production/modules/ucdpuppet'
 
@@ -214,7 +216,7 @@ class HostAddForm(django.forms.ModelForm):
         fields = ['fqdn', 'hash', 'puppet_classes']
         help_texts = {
             'fqdn': 'The FQDN of the host, as shown by: <tt>/opt/puppetlabs/bin/facter fqdn</tt>',
-            'hash': 'The SHA256 hash shown during the first run of: <tt>%s</tt>' % puppet_run_command_initial,
+            'hash': 'The SHA256 hash shown during the first run of: <tt>%s</tt>' % puppet['command_initial'],
         }
         widgets = {'hash': django.forms.TextInput(attrs={'size': 98}),
                    'fqdn': django.forms.TextInput(attrs={'size': 55})}
