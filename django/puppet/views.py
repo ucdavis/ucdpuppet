@@ -78,7 +78,8 @@ def get_user_info(request):
 
 
 def validate_host(request, formset, user):
-    fqdn = formset.cleaned_data['fqdn']
+    # Downcase it early as Puppet deals exclusively with lower case FQDNs
+    fqdn = formset.cleaned_data['fqdn'] = formset.instance.fqdn = formset.cleaned_data['fqdn'].lower()
 
     # Before the host gets saved to the database, make sure it has been signed by Puppet
     out, err = run_command(['/usr/bin/sudo', '/opt/puppetlabs/bin/puppet', 'cert', 'list', '--color=false', fqdn])
@@ -94,7 +95,9 @@ def validate_host(request, formset, user):
         return False
 
     # + "kona.cse.ucdavis.edu" (SHA256) B4:61:67:48:5A:02:88:B1:7E:D0:4C:6C:C4:CD:BB:4F:16:94:D6:62:F7:23:28:02:78:C7:B7:A5:A0:1D:C0:87
-    data = out.split()
+    #   "millermr-dell-system-xps-l321x.ucdavis.edu" (SHA256) 19:F2:FA:FA:01:0D:36:51:F7:95:27:0B:95:86:2A:C6:EB:66:8B:F1:72:47:DF:1C:4C:1E:E4:72:AB:35:05:27
+
+    data = out.strip().split()
 
     if data[0] == '+':
         msg_admins(request, 'A certificate for this FQDN is already signed:<pre>%s</pre>' % out)
