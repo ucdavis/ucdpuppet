@@ -11,6 +11,10 @@
 </head>
 <body>
 
+{% if request.user.is_superuser %}
+    <span style="float: right;"><a href="{% url 'admin:index' %}">Django Admin</a></span>
+{% endif %}
+
 <h3 align="center">{% block header %}{% endblock %}</h3>
 
 {% if messages %}
