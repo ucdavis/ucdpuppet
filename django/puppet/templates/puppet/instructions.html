@@ -1,8 +1,8 @@
 <p>
     UCD Puppet basic installation instructions for Debian/Ubuntu family boxes
 <pre>
-wget https://apt.puppetlabs.com/puppetlabs-release-pc1-$(lsb_release -sc | sed 's/^\(unstable\|sid\)$/jessie/').deb
-sudo dpkg -i puppetlabs-release-pc1-$(lsb_release -sc | sed 's/^\(unstable\|sid\)$/jessie/').deb
+wget https://apt.puppetlabs.com/puppetlabs-release-pc1-$(lsb_release -sc).deb
+sudo dpkg -i puppetlabs-release-pc1-$(lsb_release -sc).deb
 sudo apt-get update
 sudo apt-get install puppet-agent
 </pre>
@@ -49,6 +49,10 @@ root@puppet-test:~#
 <p>Pay attention to the output, you will need the FQDN from the line that starts with <tt>Creating
     a new SSL key for</tt> as well as the certificate fingerprint from the line that starts with <tt>Info: Certificate
     Request fingerprint (SHA256):</tt>. Plug those values into the form below.</p>
+
+<p>If the fingerprint is not displayed during the initial connection you can display it with <tt>{{ puppet.fingerprint }}</tt> .</p>
+
+<p><b>NOTE: ALL Puppet commands MUST be run as root, either directly or with sudo or it WILL NOT WORK correctly.</b></p>
 
 <hr/>
 
