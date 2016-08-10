@@ -14,7 +14,7 @@ from .utils import *
 puppet = {}
 puppet['command_base'] = 'sudo /opt/puppetlabs/bin/puppet'
 
-puppet['command'] = puppet['command_base'] + 'agent --test --server=puppet.ucdavis.edu'
+puppet['command'] = puppet['command_base'] + ' agent --test --server=puppet.ucdavis.edu'
 puppet['command_initial'] = puppet['command'] + ' --waitforcert 0'
 
 puppet['fingerprint'] = puppet['command_base'] + ' --fingerprint'
