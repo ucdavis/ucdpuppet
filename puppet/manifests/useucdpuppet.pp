@@ -11,5 +11,22 @@ class ucdpuppet::useucdpuppet
       context => "/files/etc/puppetlabs/puppet/puppet.conf/agent",
       changes => ["set server puppet.ucdavis.edu"]
    }
+	service { 'puppet':
+		enable => true,
+	}
+	case $operatingsystem {
+			  /^(Debian|Ubuntu|LinuxMint)$/: {
+						 file { "/etc/modprobe.d/blacklist-dccp.conf":
+									source => "puppet:///modules/ucdpuppet/ubuntu-dccp.conf"
+						 }
+			  }
+			  /^(CentOS|RedHat)$/: {
+						 file { "/etc/modprobe.d/blacklist-dccp.conf":
+									source => "puppet:///modules/ucdpuppet/centos-dccp.conf"
+						 }
+			  }
+
+	}
+
 }
 
