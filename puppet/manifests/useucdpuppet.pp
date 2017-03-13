@@ -16,7 +16,7 @@ class ucdpuppet::useucdpuppet
   }
   #CVE-2017-2636
   File { "/etc/modprobe.d/disable-n_hdlc.conf":
-    source => ["puppet:///modules/cse/disable-n_hdlc.conf"],
+    source => ["puppet:///modules/ucdpuppet/disable-n_hdlc.conf"],
   }
   augeas { "floppy.conf":
     context =>  "/files//etc/modprobe.d/floppy.conf",
