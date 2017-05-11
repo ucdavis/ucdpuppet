@@ -13,6 +13,8 @@ class ucdpuppet::useucdpuppet
   }
   service { 'puppet':
     enable => true,
+    ensure =>  running,
+    hasstatus =>  true,
   }
   #CVE-2017-2636
   File { "/etc/modprobe.d/disable-n_hdlc.conf":
