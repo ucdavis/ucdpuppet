@@ -15,7 +15,7 @@
 
 class ucdpuppet::unbound {
 	case $operatingsystem {
-		/^(Debian|Ubuntu)$/: { 
+		/^(Debian|Ubuntu|LinuxMint)$/: { 
 			package { [ unbound ]: ensure => latest }
 		}
 		'RedHat', 'CentOS': { 
@@ -29,7 +29,7 @@ class ucdpuppet::unbound {
 
 class ucdpuppet::unboundnetworkmanager inherits ucdpuppet::unbound {
 	case $operatingsystem {
-		/^(Debian|Ubuntu)$/: { 
+		/^(Debian|Ubuntu|LinuxMint)$/: { 
 			file { [ '/etc/NetworkManager' ]:
     			ensure => 'directory',
   			}

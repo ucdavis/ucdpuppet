@@ -11,7 +11,7 @@
 class ucdpuppet::automatic_updates
 {
 	case $operatingsystem {
-		/^(Debian|Ubuntu)$/: {
+		/^(Debian|Ubuntu|LinuxMint)$/: {
 			include apt
 			include unattended_upgrades
 #			package { [unattended-upgrades]: ensure => latest }

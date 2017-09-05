@@ -9,7 +9,7 @@
 
 class ucdpuppet::ssh {
 	case $operatingsystem {
-		/^(Debian|Ubuntu)$/: {
+		/^(Debian|Ubuntu|LinuxMint)$/: {
 			package { "openssh-server": ensure => latest}
 			service { "ssh":
 				ensure  => true,
@@ -33,7 +33,7 @@ class ucdpuppet::ssh {
 
 class ucdpuppet::sshnopassword inherits ucdpuppet::ssh {
 	case $operatingsystem {
-		/^(Debian|Ubuntu)$/: {
+		/^(Debian|Ubuntu|LinuxMint)$/: {
 			augeas { sshd_config:
 				context => "/files/etc/ssh/sshd_config",
 				changes => [ "set PasswordAuthentication no"],
