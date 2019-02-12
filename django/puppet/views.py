@@ -116,7 +116,7 @@ def validate_host(request, formset, user):
         return False
 
     out, err = run_command(['/usr/bin/sudo', '/opt/puppetlabs/bin/puppet', 'cert', 'sign', '--color=false', fqdn])
-    if out and not out.startswith('Signing Certificate Request for:'):
+    if out and not (out.startswith('Signing Certificate Request for:') or out.startswith('Notice: Signed certificate request for')):
         msg_admins(request, 'Received unexpected output trying to sign the certificate: <br/>%s<br/>%s' % (out, err))
         return False
     if err:
