@@ -17,9 +17,9 @@ puppet['command_base'] = 'sudo /opt/puppetlabs/bin/puppet'
 puppet['command'] = puppet['command_base'] + ' agent --test --server=puppet.ucdavis.edu'
 puppet['command_initial'] = puppet['command'] + ' --waitforcert 0'
 
-puppet['fingerprint'] = puppet['command_base'] + ' --fingerprint'
+puppet['fingerprint'] = puppet['command_base'] + ' agent --fingerprint'
 
-puppet['clear_certs'] = 'sudo rm -rf /etc/puppetlabs/puppet/ssl/*'
+puppet['clear_certs'] = 'sudo rm -rf /etc/puppetlabs/puppet/ssl/ && sudo mkdir /etc/puppetlabs/puppet/ssl/'
 
 ucdpuppet_dir = '/etc/puppetlabs/code/environments/production/modules/ucdpuppet'
 
