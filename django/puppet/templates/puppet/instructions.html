@@ -1,9 +1,9 @@
 <p>
     UCD Puppet basic installation instructions for Debian/Ubuntu family boxes
 <pre>
-wget https://apt.puppetlabs.com/puppet-release-$(lsb_release -sc).deb
+wget https://apt.puppetlabs.com/puppet6-release-$(lsb_release -sc).deb
 # OR poke around https://apt.puppetlabs.com/
-sudo dpkg -i puppetlabs-release-pc1-$(lsb_release -sc).deb
+sudo dpkg -i puppet6-release-$(lsb_release -sc).deb
 sudo apt-get update
 sudo apt-get install puppet-agent
 </pre>
@@ -12,7 +12,7 @@ sudo apt-get install puppet-agent
 <p>For RedHat/CentOS/etc newer than version 5:
 <pre>
 sudo yum install redhat-lsb-core
-sudo yum install https://yum.puppetlabs.com/puppetlabs-release-pc1-el-$(lsb_release -sr | awk -F. '{print $1}').noarch.rpm
+sudo yum install https://yum.puppetlabs.com/puppet6-release-el-$(lsb_release -sr | awk -F. '{print $1}').noarch.rpm
 # OR poke around https://yum.puppetlabs.com/
 sudo yum install puppet-agent
 </pre>
@@ -22,14 +22,17 @@ sudo yum install puppet-agent
 <pre>
 sudo yum install redhat-lsb-core
 # OR poke around https://yum.puppetlabs.com/
-wget https://yum.puppetlabs.com/puppetlabs-release-pc1-el-$(lsb_release -sr | awk -F. '{print $1}').noarch.rpm
-sudo rpm -Uvh puppetlabs-release-pc1-el-$(lsb_release -sr | awk -F. '{print $1}').noarch.rpm
+wget https://yum.puppetlabs.com/puppet6-release-el-$(lsb_release -sr | awk -F. '{print $1}').noarch.rpm
+sudo rpm -Uvh puppet6-release-el-$(lsb_release -sr | awk -F. '{print $1}').noarch.rpm
 sudo yum install puppet-agent
 </pre>
 </p>
 
-<p>For other Linux flavors see the <a href="https://docs.puppet.com/guides/puppetlabs_package_repositories.html">upstream documentation</a>.</p>
-
+<p>For other Linux flavors see the <a href="https://puppet.com/docs/puppet/latest/installing_and_upgrading.html">upstream documentation</a>, specifically:</p>
+<ul>
+    <li>Using the Puppet platform</li>
+    <li>Installing agents</li>
+</ul>
 <hr>Now, run the agent:
 <pre>
 {{ puppet.command_initial }}
@@ -59,12 +62,13 @@ root@puppet-test:~#
 
 <hr/>
 
-<p>If your only output is:</p>
-<span class="pre console">Exiting; no certificate found and waitforcert is disabled
-</span><br/>
+If your only output is:
+<span class="pre console">Exiting; no certificate found and waitforcert is disabled</span>
+<br/>
+<br/>
 
 Then you need to clear out you Puppet client's SSL directory with <tt>{{ puppet.clear_certs }}</tt> and re-run the command.
 <hr/>
 
-<p>For full instructions see the <a href="https://docs.puppetlabs.com/puppet/latest/reference/install_linux.html">upstream
+<p>For full instructions see the <a href="https://puppet.com/docs/puppet/latest/installing_and_upgrading.html">upstream
     instructions</a>.</p>
