@@ -58,5 +58,6 @@ flycheck_*.el
 # Omen Wild
 .idea/
 *.pyc
+.project
 
 # mode: gitignore;

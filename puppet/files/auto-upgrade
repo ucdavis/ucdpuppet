@@ -1,2 +1,6 @@
+### WARNING! This file is controlled by UCD Puppet:
+## https://github.com/ucdavis/ucdpuppet
+# Chat with the admins in the Slack #puppet channel or open issues/pull requests on Github.
+
 APT::Periodic::Update-Package-Lists "1";
 APT::Periodic::Unattended-Upgrade "1";
