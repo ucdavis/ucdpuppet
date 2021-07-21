@@ -82,9 +82,9 @@ def validate_host(request, formset, user):
     fqdn = formset.cleaned_data['fqdn'] = formset.instance.fqdn = formset.cleaned_data['fqdn'].lower()
 
     # Before the host gets saved to the database, make sure it has been signed by Puppet
-    out, err = run_command(['/usr/bin/sudo', '/opt/puppetlabs/bin/puppet', 'cert', 'list', '--color=false', fqdn])
+    out, err = run_command(['/usr/bin/sudo', '/opt/puppetlabs/bin/puppetserver', 'ca', 'list', '--certname', fqdn])
 
-    if err and err.startswith('Error: Could not find a certificate for'):
+    if out and out.startswith('Missing Certificates:'):
         messages.warning(request,
                          'The Puppet Server was unable to find a certificate signing request from <tt>%s</tt>.<br/>Did you run <tt>%s</tt>?' % (
                              fqdn, puppet['command_initial']),
@@ -94,29 +94,40 @@ def validate_host(request, formset, user):
         msg_admins(request, 'Received error trying to list the certificate:<pre>%s</pre><pre>%s</pre>' % (out, err))
         return False
 
-    # + "kona.cse.ucdavis.edu" (SHA256) B4:61:67:48:5A:02:88:B1:7E:D0:4C:6C:C4:CD:BB:4F:16:94:D6:62:F7:23:28:02:78:C7:B7:A5:A0:1D:C0:87
-    #   "millermr-dell-system-xps-l321x.ucdavis.edu" (SHA256) 19:F2:FA:FA:01:0D:36:51:F7:95:27:0B:95:86:2A:C6:EB:66:8B:F1:72:47:DF:1C:4C:1E:E4:72:AB:35:05:27
+    """
+Missing Certificates:
+    fc-ajfinger-lt1.ucdavis.eduMISSING
 
-    data = out.strip().split()
+Requested Certificates:
+    fc-ajfinger-lt1.ucdavis.edu       (SHA256)  BD:42:95:A3:CF:2F:AE:0A:BC:CC:B9:6C:0B:58:8F:D5:D6:68:17:20:89:69:81:70:11:DF:4A:9A:3D:C2:B1:4F
+    """
 
-    if data[0] == '+':
+    lines = out.strip().splitlines()
+
+    header = lines[0].strip()
+    data = lines[1].strip().split()
+
+
+    if header.startswith('Signed Certificates:'):
         msg_admins(request, 'A certificate for this FQDN is already signed:<pre>%s</pre>' % out)
         return False
 
-    if data[0] == '-':
+    # TODO: find equivelant for new ca commands
+    if header.startswith('Revoked Certificates:'):
         msg_admins(request, "The certificate for this host has been revoked on the server. You may need to clear out Puppet's SSL directory <tt>%s</tt> and re-run the Puppet command <tt>%s</tt>." % (puppet['clear_certs'], puppet['command_initial']))
         return False
 
     if data[2] != formset.cleaned_data['hash']:
-        msg_admins(request, 'Your specified hash does not match the hash Puppet has for your host.')
+        out, err = run_command(['/usr/bin/sudo', '/opt/puppetlabs/bin/puppetserver', 'ca', 'clean', '--certname', fqdn])
+        msg_admins(request, "Your specified hash does not match the hash Puppet had for your host. The old request has been removed from the server. Clear out Puppet's SSL directory <tt>%s</tt> and re-run the Puppet command <tt>%s</tt>." % (puppet['clear_certs'], puppet['command_initial']))
         return False
 
-    if data[0] != '"' + fqdn + '"':
+    if data[0] != fqdn:
         msg_admins(request, 'Invalid output returned from Puppet:<br/><pre>%s</pre>' % out)
         return False
 
-    out, err = run_command(['/usr/bin/sudo', '/opt/puppetlabs/bin/puppet', 'cert', 'sign', '--color=false', fqdn])
-    if out and not (out.startswith('Signing Certificate Request for:') or out.startswith('Notice: Signed certificate request for')):
+    out, err = run_command(['/usr/bin/sudo', '/opt/puppetlabs/bin/puppetserver', 'ca', 'sign', '--certname', fqdn])
+    if out and not out.startswith('Successfully signed certificate request for'):
         msg_admins(request, 'Received unexpected output trying to sign the certificate: <br/>%s<br/>%s' % (out, err))
         return False
     if err:

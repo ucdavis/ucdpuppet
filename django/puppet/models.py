@@ -212,7 +212,7 @@ class Host(models.Model):
 
         super(Host, self).delete()
 
-        return run_command(['/usr/bin/sudo', '/opt/puppetlabs/bin/puppet', 'cert', 'clean', '--color=false', fqdn])
+        return run_command(['/usr/bin/sudo', '/opt/puppetlabs/bin/puppetserver', 'ca', 'clean', '--certname', fqdn])
 
 
 class HostAddForm(django.forms.ModelForm):
