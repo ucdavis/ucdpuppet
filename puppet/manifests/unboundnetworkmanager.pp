@@ -16,7 +16,7 @@
 class ucdpuppet::unbound {
 	case $operatingsystem {
 		/^(Debian|Ubuntu|LinuxMint)$/: { 
-			package { [ unbound ]: ensure => latest }
+			package { [ unbound,resolvconf ]: ensure => latest }
 		}
 		'RedHat', 'CentOS': { 
 			package { [ unbound ]: ensure => latest }
